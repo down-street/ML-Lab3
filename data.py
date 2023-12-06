@@ -10,11 +10,11 @@ import plotly.express as px
 
 class data_loader():
     def __init__(self) -> None:
-        self.country = self.data.country
         self.df_1 = None
         self.df_2 = None
-        self.data1 = pd.read_csv('Country-data.csv')
-        self.data2 = pd.read_csv('Country-data.csv')
+        self.data1 = pd.read_csv('data/Country-data.csv')
+        self.data2 = pd.read_csv('data/Country-data.csv')
+        self.country = self.data1.country
         self.analysis()
         # self.draw_pic()
         self.normalization()
