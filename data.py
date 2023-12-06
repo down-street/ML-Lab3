@@ -5,7 +5,7 @@ import seaborn as sns
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.decomposition import PCA, IncrementalPCA
 from sklearn.metrics import silhouette_score, calinski_harabasz_score, davies_bouldin_score
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans, DBSCAN, AffinityPropagation
 import plotly.express as px
 
 class data_loader():
@@ -57,16 +57,16 @@ class data_loader():
         # 针对只drop了country的data1
         pca = PCA(n_components=9).fit(self.df_1)
         exp = pca.explained_variance_ratio_
-        plt.plot(np.cumsum(exp), linewidth=2, marker = 'o', linestyle = '--')
-        plt.title("PCA", fontsize=20)
-        plt.xlabel('n_component')
-        plt.ylabel('Cumulative explained Variance Ratio')
-        plt.yticks(np.arange(0.55, 1.05, 0.05))
+        # plt.plot(np.cumsum(exp), linewidth=2, marker = 'o', linestyle = '--')
+        # plt.title("PCA", fontsize=20)
+        # plt.xlabel('n_component')
+        # plt.ylabel('Cumulative explained Variance Ratio')
+        # plt.yticks(np.arange(0.55, 1.05, 0.05))
         # plt.show()     
         final_pca = IncrementalPCA(n_components=5).fit_transform(self.df_1)
         pc = np.transpose(final_pca)
         corrmat = np.corrcoef(pc)
-        sns.heatmap(data=corrmat, annot=True, fmt=".2f", linewidth=0.75, cmap="Blues")
+        # sns.heatmap(data=corrmat, annot=True, fmt=".2f", linewidth=0.75, cmap="Blues")
         # plt.show()
         self.data1 = pd.DataFrame({
             'PC1':pc[0],
@@ -75,31 +75,31 @@ class data_loader():
             'PC4':pc[3],
             'PC5':pc[4],
         })
-        plt.subplots(figsize=(15,6))
-        sns.boxplot(data=self.data1)
+        # plt.subplots(figsize=(15,6))
+        # sns.boxplot(data=self.data1)
         # plt.show()
 
         # 针对drop了country和gdpp的data2
         pca = PCA(n_components=8).fit(self.df_2)
         exp = pca.explained_variance_ratio_
-        plt.plot(np.cumsum(exp), linewidth=2, marker = 'o', linestyle = '--')
-        plt.title("PCA", fontsize=20)
-        plt.xlabel('n_component')
-        plt.ylabel('Cumulative explained Variance Ratio')
-        plt.yticks(np.arange(0.55, 1.05, 0.05))
+        # plt.plot(np.cumsum(exp), linewidth=2, marker = 'o', linestyle = '--')
+        # plt.title("PCA", fontsize=20)
+        # plt.xlabel('n_component')
+        # plt.ylabel('Cumulative explained Variance Ratio')
+        # plt.yticks(np.arange(0.55, 1.05, 0.05))
         # plt.show()      
         final_pca = IncrementalPCA(n_components=3).fit_transform(self.df_2)
         pc = np.transpose(final_pca)
         corrmat = np.corrcoef(pc)
-        sns.heatmap(data=corrmat, annot=True, fmt=".2f", linewidth=0.75, cmap="Blues")
+        # sns.heatmap(data=corrmat, annot=True, fmt=".2f", linewidth=0.75, cmap="Blues")
         # plt.show()
         self.data2 = pd.DataFrame({
             'PC1':pc[0],
             'PC2':pc[1],
             'PC3':pc[2],
         })
-        plt.subplots(figsize=(15,6))
-        sns.boxplot(data=self.data1)
+        # plt.subplots(figsize=(15,6))
+        # sns.boxplot(data=self.data1)
         # plt.show()
 
 
@@ -159,8 +159,11 @@ class evaluation():
         fig.show()
 
 
-# 使用说明，按如下方式可以加载data1，同样可将data1替换为data2
-test = data_loader()  # 加载数据，这里我把分析输出的图都注释了，到时候写报告的适合我来跑，只做了归一化和PCA降维
-country = test.country
-kmeans = KMeans(n_clusters=3).fit(test.data1)
-evaluation(test.data1,kmeans.labels_,country,kmeans)  # 输出三个结果和地图的过程，不用可以注释
+if __name__ == '__main__':
+    # 使用说明，按如下方式可以加载data1，同样可将data1替换为data2
+    test = data_loader()  # 加载数据，这里我把分析输出的图都注释了，到时候写报告的适合我来跑，只做了归一化和PCA降维
+    country = test.country
+    # kmeans = KMeans(n_clusters=3).fit(test.data1)
+    # model = AffinityPropagation(preference=-2).fit(test.data1)  # -2是三分类，-10是二分类
+    model = DBSCAN(eps=0.17, min_samples=4).fit(test.data1)
+    evaluation(test.data1, model.labels_,country, model)  # 输出三个结果和地图的过程，不用可以注释
