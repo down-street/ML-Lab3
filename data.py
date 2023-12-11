@@ -22,7 +22,6 @@ class data_loader():
     
     def analysis(self):
         print('data meanings:')
-        print(pd.read_csv('data-dictionary.csv'))
         print('-----------------------------')
         print('data info:')
         print(self.data1.info())
@@ -164,6 +163,6 @@ if __name__ == '__main__':
     test = data_loader()  # 加载数据，这里我把分析输出的图都注释了，到时候写报告的适合我来跑，只做了归一化和PCA降维
     country = test.country
     # kmeans = KMeans(n_clusters=3).fit(test.data1)
-    # model = AffinityPropagation(preference=-2).fit(test.data1)  # -2是三分类，-10是二分类
-    model = DBSCAN(eps=0.17, min_samples=4).fit(test.data1)
+    model = AffinityPropagation(preference=-3).fit(test.data1)  # -2是三分类，-10是二分类
+    # model = DBSCAN(eps=0.17, min_samples=4).fit(test.data1)
     evaluation(test.data1, model.labels_,country, model)  # 输出三个结果和地图的过程，不用可以注释
